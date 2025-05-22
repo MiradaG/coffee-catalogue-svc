@@ -1,0 +1,202 @@
+openapi: 3.0.0
+info:
+  title: Combined API Specification
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the service
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'coffee-catalogue-svc is up and running on port :: 3000'
+  /:
+    get:
+      summary: Get all coffees
+      description: Returns a list of all coffees
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: All Coffees fetched
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Coffee'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+    post:
+      summary: Add a new coffee
+      description: Adds a new coffee to the catalogue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCoffee'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Added New Coffee
+                  data:
+                    $ref: '#/components/schemas/Coffee'
+  /{id}:
+    get:
+      summary: Get coffee by ID
+      description: Returns a coffee based on the provided ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the coffee to retrieve
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Coffee found by ID :: 123'
+                  data:
+                    $ref: '#/components/schemas/Coffee'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    put:
+      summary: Update coffee by ID
+      description: Updates an existing coffee based on the provided ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the coffee to update
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewCoffee'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Updated Coffee :: 123'
+                  data:
+                    $ref: '#/components/schemas/Coffee'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    delete:
+      summary: Delete coffee by ID
+      description: Deletes a coffee based on the provided ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the coffee to delete
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Coffee Deleted :: 123'
+                  data:
+                    type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+components:
+  schemas:
+    Coffee:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+    NewCoffee:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+      required:
+      - name
+      - description
+      - price
