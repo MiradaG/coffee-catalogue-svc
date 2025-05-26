@@ -6,10 +6,10 @@ paths:
   /health:
     get:
       summary: Health check endpoint
-      description: Returns the health status of the service
+      description: Returns the health status of the service.
       responses:
         '200':
-          description: Service is healthy
+          description: Service is up and running
           content:
             application/json:
               schema:
@@ -17,11 +17,11 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: 'coffee-catalogue-svc is up and running on port :: 3000'
-  /:
+                    description: Health status message.
+  /coffees:
     get:
       summary: Get all coffees
-      description: Returns a list of all coffees
+      description: Returns a list of all coffees.
       responses:
         '200':
           description: Successful operation
@@ -32,7 +32,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: All Coffees fetched
+                    description: Success message
                   data:
                     type: array
                     items:
@@ -46,20 +46,28 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: false
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
                   error:
                     type: string
     post:
       summary: Add a new coffee
-      description: Adds a new coffee to the catalogue
+      description: Adds a new coffee to the catalogue.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewCoffee'
+              $ref: '#/components/schemas/CoffeeInput'
       responses:
-        '200':
+        '201':
           description: Successful operation
           content:
             application/json:
@@ -68,13 +76,31 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Added New Coffee
+                    description: Success message
                   data:
                     $ref: '#/components/schemas/Coffee'
-  /{id}:
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /coffees/{id}:
     get:
       summary: Get coffee by ID
-      description: Returns a coffee based on the provided ID
+      description: Returns a coffee by its ID.
       parameters:
       - name: id
         in: path
@@ -92,7 +118,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: 'Coffee found by ID :: 123'
+                    description: Success message
                   data:
                     $ref: '#/components/schemas/Coffee'
         '400':
@@ -104,9 +130,27 @@ paths:
                 properties:
                   error:
                     type: string
+        '404':
+          description: Coffee not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
     put:
       summary: Update coffee by ID
-      description: Updates an existing coffee based on the provided ID
+      description: Updates an existing coffee by its ID.
       parameters:
       - name: id
         in: path
@@ -119,7 +163,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewCoffee'
+              $ref: '#/components/schemas/CoffeeInput'
       responses:
         '200':
           description: Successful operation
@@ -130,7 +174,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: 'Updated Coffee :: 123'
+                    description: Success message
                   data:
                     $ref: '#/components/schemas/Coffee'
         '400':
@@ -142,9 +186,27 @@ paths:
                 properties:
                   error:
                     type: string
+        '404':
+          description: Coffee not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
     delete:
       summary: Delete coffee by ID
-      description: Deletes a coffee based on the provided ID
+      description: Deletes a coffee by its ID.
       parameters:
       - name: id
         in: path
@@ -162,11 +224,30 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: 'Coffee Deleted :: 123'
+                    description: Success message
                   data:
-                    type: object
+                    type: string
+                    description: ID of the deleted coffee
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Coffee not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -181,22 +262,26 @@ components:
       properties:
         id:
           type: string
+          description: Unique identifier for the coffee
         name:
           type: string
+          description: Name of the coffee
         description:
           type: string
-        price:
-          type: number
-    NewCoffee:
+          description: Description of the coffee
+      required:
+      - id
+      - name
+      - description
+    CoffeeInput:
       type: object
       properties:
         name:
           type: string
+          description: Name of the coffee
         description:
           type: string
-        price:
-          type: number
+          description: Description of the coffee
       required:
       - name
       - description
-      - price
