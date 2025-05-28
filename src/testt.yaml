@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  title: Combined API Specification
+  version: 1.0.0
+paths:
+  /coffees:
+    get:
+      summary: Get all coffees
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coffee'
+    post:
+      summary: Add a new coffee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoffeeInput'
+      responses:
+        '201':
+          description: Coffee created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coffee'
+        '400':
+          description: Invalid input
+  /coffees/{id}:
+    get:
+      summary: Get coffee by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the coffee to retrieve
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coffee'
+        '404':
+          description: Coffee not found
+    put:
+      summary: Update coffee by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the coffee to update
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoffeeInput'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Coffee'
+        '400':
+          description: Invalid input
+        '404':
+          description: Coffee not found
+    delete:
+      summary: Delete coffee by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the coffee to delete
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: Coffee not found
+components:
+  schemas:
+    Coffee:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number
+          format: decimal
+        imageUrl:
+          type: string
+          nullable: true
+      required:
+      - name
+      - quantity
+      - price
+    CoffeeInput:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number
+          format: number
+        imageUrl:
+          type: string
+          nullable: true
+      required:
+      - name
+      - quantity
+      - price
